@@ -3,20 +3,36 @@ import { initialState, reducer } from '@/modules/ChangeTimetableFrom/reducer';
 import {
   brakeTimeOptions,
   hourTypes,
+  // workingDaysData,
 } from '@/modules/ChangeTimetableFrom/const';
 import {
   setBrakeTime,
   setDateFrom,
   setDateTo,
+  setEndTime,
   setHoursPerDay,
   setHourType,
+  setStartTime,
   setTotalHours,
+  // setWorkingDays,
 } from '@/modules/ChangeTimetableFrom/actions/ChangeTimetable.actions';
 import moment from 'moment';
-
+import { calcDate } from '@/shared/utils/calcDate';
+import { calcTime } from '@/shared/utils';
+//TODO: add functions
 const ChangeTimetableForm = () => {
   const [
-    { totalHours, dateFrom, dateTo, hourType, brakeTime, hoursPerDay },
+    {
+      totalHours,
+      dateFrom,
+      dateTo,
+      hourType,
+      brakeTime,
+      hoursPerDay,
+      workingDays,
+      startTime,
+      endTime,
+    },
     dispatch,
   ] = useReducer(reducer, initialState);
   return (
@@ -25,6 +41,14 @@ const ChangeTimetableForm = () => {
         <select
           onChange={(e) => {
             dispatch(setHourType(+e.target.value));
+            const minutes = +e.target.value === 0 ? 45 : 60;
+            dispatch(
+              setEndTime(
+                moment(startTime, 'HH:mm')
+                  .add(minutes * hoursPerDay, 'minutes')
+                  .format('HH:mm')
+              )
+            );
           }}
           defaultValue={hourType}
         >
@@ -38,13 +62,11 @@ const ChangeTimetableForm = () => {
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (totalHours) {
+              if (totalHours >= 2) {
                 dispatch(setTotalHours(totalHours - 1));
                 dispatch(
                   setDateTo(
-                    moment(dateFrom)
-                      .add(totalHours, 'hours')
-                      .format('yyyy-MM-DD')
+                    calcDate(dateFrom, totalHours - 1, hoursPerDay, workingDays)
                   )
                 );
               }
@@ -56,14 +78,11 @@ const ChangeTimetableForm = () => {
             type="number"
             value={totalHours}
             onChange={(e) => {
-              const n = e.target.value;
-              console.log(e.target.value);
-              dispatch(setTotalHours(+n));
-              console.log(totalHours);
+              const n = e.target.valueAsNumber;
+              console.log(e.target.valueAsNumber);
+              dispatch(setTotalHours(n));
               dispatch(
-                setDateTo(
-                  moment(dateFrom).add(totalHours, 'hours').format('yyyy-MM-DD')
-                )
+                setDateTo(calcDate(dateFrom, n, hoursPerDay, workingDays))
               );
             }}
           />
@@ -74,7 +93,7 @@ const ChangeTimetableForm = () => {
               dispatch(setTotalHours(totalHours + 1));
               dispatch(
                 setDateTo(
-                  moment(dateFrom).add(totalHours, 'hours').format('yyyy-MM-DD')
+                  calcDate(dateFrom, totalHours + 1, hoursPerDay, workingDays)
                 )
               );
             }}
@@ -89,16 +108,19 @@ const ChangeTimetableForm = () => {
             onChange={(e) => dispatch(setDateFrom(e.target.value))}
           />
           <span>до</span>
-          <input
-            disabled
-            type="date"
-            value={dateTo}
-            // onChange={(e) => dispatch(setDateTo(e.target.value))}
-          />
+          <input disabled type="date" value={dateTo} />
         </div>
       </div>
       <div className={'flex'}>
-        <button>пн/ср/пт</button>
+        {/*{workingDaysData.map(({value, label}) => {*/}
+        {/*  if(workingDays.includes(value)){*/}
+        {/*    return <button onClick={(e) => {*/}
+        {/*      e.preventDefault()*/}
+        {/*      // dispatch(setWorkingDays())*/}
+        {/*    }*/}
+        {/*    }>{label}</button>*/}
+        {/*  }*/}
+        {/*})}*/}
         <button>вт/чт</button>
         <button>пн</button>
         <button>вт</button>
@@ -112,8 +134,12 @@ const ChangeTimetableForm = () => {
         <select
           defaultValue={brakeTime}
           onChange={(e) => {
-            // dispatch(setDateTo(moment(dateFrom).add()));
             dispatch(setBrakeTime(+e.target.value));
+            dispatch(
+              setEndTime(
+                calcTime(startTime, hourType, hoursPerDay, +e.target.value)
+              )
+            );
           }}
         >
           {brakeTimeOptions.map(({ label, value }) => (
@@ -126,32 +152,68 @@ const ChangeTimetableForm = () => {
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (hoursPerDay) {
+              if (hoursPerDay >= 2) {
+                const hours = hoursPerDay - 1;
                 dispatch(setHoursPerDay(hoursPerDay - 1));
+                dispatch(
+                  setDateTo(
+                    calcDate(dateFrom, totalHours, hoursPerDay - 1, workingDays)
+                  )
+                );
+                dispatch(
+                  setEndTime(calcTime(startTime, hourType, hours, brakeTime))
+                );
               }
             }}
           >
             -
           </button>
           <input
-            type="text"
+            type="number"
             value={hoursPerDay}
-            onChange={(e) => dispatch(setHoursPerDay(+e.target.value))}
+            onChange={(e) => {
+              const hours = e.target.valueAsNumber;
+              dispatch(setHoursPerDay(hours));
+              dispatch(
+                setDateTo(calcDate(dateFrom, totalHours, hours, workingDays))
+              );
+              dispatch(
+                setEndTime(calcTime(startTime, hourType, hours, brakeTime))
+              );
+            }}
           />
           <span>Часов в день</span>
           <button
             onClick={(e) => {
               e.preventDefault();
-              dispatch(setHoursPerDay(hoursPerDay + 1));
+              const hours = hoursPerDay + 1;
+              dispatch(setHoursPerDay(hours));
+              dispatch(
+                setDateTo(calcDate(dateFrom, totalHours, hours, workingDays))
+              );
+              dispatch(
+                setEndTime(calcTime(startTime, hourType, hours, brakeTime))
+              );
             }}
           >
             +
           </button>
         </div>
         <div className={'flex'}>
-          <input type="time" onChange={(e) => console.log(e.target.value)} />
+          <input
+            type="time"
+            value={startTime}
+            onChange={(e) => {
+              dispatch(setStartTime(e.target.value));
+              dispatch(
+                setEndTime(
+                  calcTime(e.target.value, hourType, hoursPerDay, brakeTime)
+                )
+              );
+            }}
+          />
           <span>до</span>
-          <input type="time" />
+          <input type="time" value={endTime} disabled />
         </div>
       </div>
       <div className={'flex'}>
