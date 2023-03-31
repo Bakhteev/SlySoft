@@ -1,9 +1,11 @@
-import React, { useReducer } from 'react';
+import React, { ChangeEvent, MouseEvent, useReducer } from 'react';
 import { initialState, reducer } from '@/modules/ChangeTimetableFrom/reducer';
 import {
   brakeTimeOptions,
   hourTypes,
-  // workingDaysData,
+  studyRooms,
+  teachersNames,
+  workingDaysData,
 } from '@/modules/ChangeTimetableFrom/const';
 import {
   setBrakeTime,
@@ -14,11 +16,12 @@ import {
   setHourType,
   setStartTime,
   setTotalHours,
-  // setWorkingDays,
+  setWorkingDays,
 } from '@/modules/ChangeTimetableFrom/actions/ChangeTimetable.actions';
-import moment from 'moment';
 import { calcDate } from '@/shared/utils/calcDate';
 import { calcTime } from '@/shared/utils';
+import { DaysEnum } from '@/shared/enums';
+import UiButton from '../../shared/ui/UiButton/UiButton';
 //TODO: add functions
 const ChangeTimetableForm = () => {
   const [
@@ -35,23 +38,103 @@ const ChangeTimetableForm = () => {
     },
     dispatch,
   ] = useReducer(reducer, initialState);
+
+  const handleChangeHourType = (e: ChangeEvent<HTMLSelectElement>) => {
+    dispatch(setHourType(+e.target.value));
+    dispatch(
+      setEndTime(calcTime(startTime, +e.target.value, hoursPerDay, brakeTime))
+    );
+  };
+
+  const setTotalHoursFunctions = (value: number) => {
+    //TODO: zero
+    if (value >= 0) {
+      dispatch(setTotalHours(value));
+      dispatch(setDateTo(calcDate(dateFrom, value, hoursPerDay, workingDays)));
+    }
+  };
+
+  const handleClickTotalHours = (value: number) => {
+    return (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      setTotalHoursFunctions(value);
+    };
+  };
+
+  const handleChangeTotalHours = (e: ChangeEvent<HTMLInputElement>) => {
+    setTotalHoursFunctions(e.target.valueAsNumber);
+  };
+
+  const handleChangeDateFrom = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch(setDateFrom(e.target.value));
+    dispatch(
+      setDateTo(calcDate(e.target.value, totalHours, hoursPerDay, workingDays))
+    );
+  };
+
+  const setWorkingDaysFunction = (value: DaysEnum[]) => {
+    dispatch(setWorkingDays(value));
+    dispatch(setDateTo(calcDate(dateFrom, totalHours, hoursPerDay, value)));
+  };
+
+  const handleClickMultiWorkingDays = (value: DaysEnum[]) => {
+    return (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      setWorkingDaysFunction(value);
+    };
+  };
+
+  const handleClickWorkingDays = (value: DaysEnum) => {
+    return (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      let days;
+      if (workingDays.includes(value)) {
+        days = workingDays.filter((item) => item !== value);
+      } else {
+        days = workingDays.concat(value);
+      }
+      setWorkingDaysFunction(days);
+    };
+  };
+
+  const handleChangeBrakeTime = (e: ChangeEvent<HTMLSelectElement>) => {
+    dispatch(setBrakeTime(+e.target.value));
+    dispatch(
+      setEndTime(calcTime(startTime, hourType, hoursPerDay, +e.target.value))
+    );
+  };
+
+  const setHoursPerDayFunction = (value: number) => {
+    //TODO: zero
+    if (hoursPerDay >= 0) {
+      dispatch(setHoursPerDay(value));
+      dispatch(setDateTo(calcDate(dateFrom, totalHours, value, workingDays)));
+      dispatch(setEndTime(calcTime(startTime, hourType, value, brakeTime)));
+    }
+  };
+
+  const handleClickHoursPerDay = (value: number) => {
+    return (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      setHoursPerDayFunction(value);
+    };
+  };
+
+  const handleChangeHoursPerDay = (e: ChangeEvent<HTMLInputElement>) => {
+    setHoursPerDayFunction(e.target.valueAsNumber);
+  };
+
+  const handleChangeStartTime = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch(setStartTime(e.target.value));
+    dispatch(
+      setEndTime(calcTime(e.target.value, hourType, hoursPerDay, brakeTime))
+    );
+  };
+
   return (
     <form>
-      <div className={'flex'}>
-        <select
-          onChange={(e) => {
-            dispatch(setHourType(+e.target.value));
-            const minutes = +e.target.value === 0 ? 45 : 60;
-            dispatch(
-              setEndTime(
-                moment(startTime, 'HH:mm')
-                  .add(minutes * hoursPerDay, 'minutes')
-                  .format('HH:mm')
-              )
-            );
-          }}
-          defaultValue={hourType}
-        >
+      <div className={'flex'} style={{ gap: '20px' }}>
+        <select onChange={handleChangeHourType} defaultValue={hourType}>
           {hourTypes.map(({ label, type }) => (
             <option key={type} value={type}>
               {label}
@@ -59,89 +142,82 @@ const ChangeTimetableForm = () => {
           ))}
         </select>
         <div className={'flex'}>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              if (totalHours >= 2) {
-                dispatch(setTotalHours(totalHours - 1));
-                dispatch(
-                  setDateTo(
-                    calcDate(dateFrom, totalHours - 1, hoursPerDay, workingDays)
-                  )
-                );
-              }
-            }}
-          >
+          <UiButton roundedLeft onClick={handleClickTotalHours(totalHours - 1)}>
             -
-          </button>
+          </UiButton>
           <input
             type="number"
             value={totalHours}
-            onChange={(e) => {
-              const n = e.target.valueAsNumber;
-              console.log(e.target.valueAsNumber);
-              dispatch(setTotalHours(n));
-              dispatch(
-                setDateTo(calcDate(dateFrom, n, hoursPerDay, workingDays))
-              );
-            }}
+            onChange={handleChangeTotalHours}
           />
-          <span>Всего часов</span>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              dispatch(setTotalHours(totalHours + 1));
-              dispatch(
-                setDateTo(
-                  calcDate(dateFrom, totalHours + 1, hoursPerDay, workingDays)
-                )
-              );
+          <span
+            style={{
+              maxWidth: '44px',
+              padding: '5px',
+              fontSize: '12px',
+              background: '#dfeeff',
+              textAlign: 'center',
             }}
           >
+            Всего часов
+          </span>
+          <UiButton
+            roundedRight
+            onClick={handleClickTotalHours(totalHours + 1)}
+          >
             +
-          </button>
+          </UiButton>
         </div>
         <div className={'flex'}>
-          <input
-            type="date"
-            value={dateFrom}
-            onChange={(e) => dispatch(setDateFrom(e.target.value))}
-          />
-          <span>до</span>
+          <input type="date" value={dateFrom} onChange={handleChangeDateFrom} />
+          <span
+            style={{
+              padding: '10px',
+              background: 'grey',
+              color: 'white',
+              textTransform: 'lowercase',
+              textAlign: 'center',
+            }}
+          >
+            до
+          </span>
           <input disabled type="date" value={dateTo} />
         </div>
       </div>
       <div className={'flex'}>
-        {/*{workingDaysData.map(({value, label}) => {*/}
-        {/*  if(workingDays.includes(value)){*/}
-        {/*    return <button onClick={(e) => {*/}
-        {/*      e.preventDefault()*/}
-        {/*      // dispatch(setWorkingDays())*/}
-        {/*    }*/}
-        {/*    }>{label}</button>*/}
-        {/*  }*/}
-        {/*})}*/}
-        <button>вт/чт</button>
-        <button>пн</button>
-        <button>вт</button>
-        <button>ср</button>
-        <button>чт</button>
-        <button>пт</button>
-        <button>сб</button>
-        <button>вс</button>
+        <UiButton
+          variant={'white'}
+          onClick={handleClickMultiWorkingDays([
+            DaysEnum.MONDAY,
+            DaysEnum.WEDNESDAY,
+            DaysEnum.FRIDAY,
+          ])}
+        >
+          пн/ср/пт
+        </UiButton>
+        <UiButton
+          variant={'white'}
+          onClick={handleClickMultiWorkingDays([
+            DaysEnum.TUESDAY,
+            DaysEnum.THURSDAY,
+          ])}
+        >
+          вт/чт
+        </UiButton>
+        {workingDaysData.map(({ value, label }) => {
+          return (
+            <UiButton
+              key={value}
+              variant={workingDays.includes(value) ? 'blue' : 'white'}
+              onClick={handleClickWorkingDays(value)}
+            >
+              {label}
+            </UiButton>
+          );
+        })}
       </div>
       <div className={'flex'}>
-        <select
-          defaultValue={brakeTime}
-          onChange={(e) => {
-            dispatch(setBrakeTime(+e.target.value));
-            dispatch(
-              setEndTime(
-                calcTime(startTime, hourType, hoursPerDay, +e.target.value)
-              )
-            );
-          }}
-        >
+        <select defaultValue={brakeTime} onChange={handleChangeBrakeTime}>
           {brakeTimeOptions.map(({ label, value }) => (
             <option value={value} key={value}>
               {label}
@@ -149,76 +225,70 @@ const ChangeTimetableForm = () => {
           ))}
         </select>
         <div className={'flex'}>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              if (hoursPerDay >= 2) {
-                const hours = hoursPerDay - 1;
-                dispatch(setHoursPerDay(hoursPerDay - 1));
-                dispatch(
-                  setDateTo(
-                    calcDate(dateFrom, totalHours, hoursPerDay - 1, workingDays)
-                  )
-                );
-                dispatch(
-                  setEndTime(calcTime(startTime, hourType, hours, brakeTime))
-                );
-              }
-            }}
+          <UiButton
+            roundedLeft
+            onClick={handleClickHoursPerDay(hoursPerDay - 1)}
           >
             -
-          </button>
+          </UiButton>
           <input
             type="number"
             value={hoursPerDay}
-            onChange={(e) => {
-              const hours = e.target.valueAsNumber;
-              dispatch(setHoursPerDay(hours));
-              dispatch(
-                setDateTo(calcDate(dateFrom, totalHours, hours, workingDays))
-              );
-              dispatch(
-                setEndTime(calcTime(startTime, hourType, hours, brakeTime))
-              );
-            }}
+            onChange={handleChangeHoursPerDay}
           />
-          <span>Часов в день</span>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              const hours = hoursPerDay + 1;
-              dispatch(setHoursPerDay(hours));
-              dispatch(
-                setDateTo(calcDate(dateFrom, totalHours, hours, workingDays))
-              );
-              dispatch(
-                setEndTime(calcTime(startTime, hourType, hours, brakeTime))
-              );
+          <span
+            style={{
+              maxWidth: '44px',
+              padding: '5px',
+              fontSize: '12px',
+              background: '#dfeeff',
+              textAlign: 'center',
             }}
           >
+            Часов в день
+          </span>
+          <UiButton
+            roundedRight
+            onClick={handleClickHoursPerDay(hoursPerDay + 1)}
+          >
             +
-          </button>
+          </UiButton>
         </div>
         <div className={'flex'}>
           <input
             type="time"
             value={startTime}
-            onChange={(e) => {
-              dispatch(setStartTime(e.target.value));
-              dispatch(
-                setEndTime(
-                  calcTime(e.target.value, hourType, hoursPerDay, brakeTime)
-                )
-              );
-            }}
+            onChange={handleChangeStartTime}
           />
-          <span>до</span>
+          <span
+            style={{
+              padding: '10px',
+              background: 'grey',
+              color: 'white',
+              textTransform: 'lowercase',
+              textAlign: 'center',
+            }}
+          >
+            до
+          </span>
           <input type="time" value={endTime} disabled />
         </div>
       </div>
       <div className={'flex'}>
-        <select name="" id=""></select>
-        <select name="" id=""></select>
+        <select>
+          {teachersNames.map(({ label, value }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <select>
+          {studyRooms.map(({ label, value }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
       </div>
     </form>
   );

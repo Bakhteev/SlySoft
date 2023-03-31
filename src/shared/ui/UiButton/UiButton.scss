@@ -1,0 +1,26 @@
+@import "@/styles/variables";
+
+.ui-button {
+  padding: 10px 20px;
+  border: 1px solid $grey;
+
+  &.ui-button--rounded-left {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+
+  &.ui-button--rounded-right {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
+  &.ui-button--blue {
+    background: $blue;
+    color: $white;
+  }
+
+  &.ui-button--white {
+    background: $white;
+    color: $black;
+  }
+}

@@ -6,16 +6,7 @@ export const hourTypes = [
   { label: 'Астронамический', type: 1 },
 ];
 export const defaultDateFrom = moment().format('yyyy-MM-DD');
-export const defaultDateTo = moment().add(24, 'hours').format('yyyy-MM-DD');
 export const workingDaysData = [
-  {
-    value: [DaysEnum.MONDAY, DaysEnum.WEDNESDAY, DaysEnum.FRIDAY],
-    label: 'пн/ср/пт',
-  },
-  {
-    value: [DaysEnum.TUESDAY, DaysEnum.THURSDAY],
-    label: 'вт/чт',
-  },
   {
     value: DaysEnum.MONDAY,
     label: DaysEnum.MONDAY.valueOf(),
@@ -31,6 +22,10 @@ export const workingDaysData = [
   {
     value: DaysEnum.THURSDAY,
     label: DaysEnum.THURSDAY.valueOf(),
+  },
+  {
+    value: DaysEnum.FRIDAY,
+    label: DaysEnum.FRIDAY.valueOf(),
   },
   {
     value: DaysEnum.SATURDAY,
@@ -52,5 +47,12 @@ export const brakeTimeOptions = [
   { value: 30, label: '30 мин' },
 ];
 
-export const teachersName = [{ name: '', value: 1 }];
-export const studyRooms = [{ label: '345', value: 1 }];
+// const chooseTeacherPlaceHolder = {
+//   label: 'Выберите преподователя на это время',
+//   value: null,
+// };
+// const chooseStudyRoomPlaceholder = { label: 'Аудитория', value: null };
+export const teachersNames = [
+  { label: 'Выберите преподователя на это время', value: 0 },
+];
+export const studyRooms = [{ label: 'Аудитория', value: 0 }];

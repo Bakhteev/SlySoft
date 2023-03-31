@@ -30,7 +30,9 @@ export interface IChangeTimetableState {
 
 export interface Action {
   type: string;
+  /* eslint-disable */
   payload?: any;
+  /* eslint-enable */
 }
 
 export const initialState: IChangeTimetableState = {
