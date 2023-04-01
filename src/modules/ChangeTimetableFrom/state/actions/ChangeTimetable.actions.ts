@@ -1,17 +1,20 @@
-import { DaysEnum } from '@/modules/ChangeTimetableFrom/reducer';
-
-export const TOTAL_HOURS_INC = 'TOTAL_HOURS_INC';
-export const TOTAL_HOURS_DEC = 'TOTAL_HOURS_DEC';
-export const SET_TOTAL_HOURS = 'SET_TOTAL_HOURS';
-export const SET_DATE_FROM = 'SET_DATE_FROM';
-export const SET_DATE_TO = 'SET_DATE_TO';
-export const SET_HOUR_TYPE = 'SET_HOUR_TYPE';
-export const SET_BRAKE_TIME = 'SET_BRAKE_TIME';
-
-export const SET_HOURS_PER_DAY = 'SET_HOURS_PER_DAY';
-export const SET_START_TIME = 'SET_START_TIME';
-export const SET_END_TIME = 'SET_END_TIME';
-export const SET_WORKING_DAYS = 'SET_WORKING_DAYS';
+import { DaysEnum } from '@/shared/enums';
+import {
+  RESTORE_STATE,
+  SET_BRAKE_TIME,
+  SET_DATE_FROM,
+  SET_DATE_TO,
+  SET_END_TIME,
+  SET_GROUP_COLOR_ID,
+  SET_HOUR_TYPE,
+  SET_HOURS_PER_DAY,
+  SET_SCHOOL_ID,
+  SET_START_TIME,
+  SET_STUDY_ROOM_ID,
+  SET_TEACHER_ID,
+  SET_TOTAL_HOURS,
+  SET_WORKING_DAYS,
+} from './actions.types';
 
 export const setTotalHours = (payload: number) => ({
   type: SET_TOTAL_HOURS,
@@ -49,5 +52,24 @@ export const setEndTime = (payload: string) => ({
 });
 export const setWorkingDays = (payload: DaysEnum[]) => ({
   type: SET_WORKING_DAYS,
+  payload,
+});
+export const restoreState = () => ({
+  type: RESTORE_STATE,
+});
+export const setStudyRoomId = (payload: number) => ({
+  type: SET_STUDY_ROOM_ID,
+  payload,
+});
+export const setTeacherId = (payload: number) => ({
+  type: SET_TEACHER_ID,
+  payload,
+});
+export const setSchoolId = (payload: number) => ({
+  type: SET_SCHOOL_ID,
+  payload,
+});
+export const setGroupColorId = (payload: number) => ({
+  type: SET_GROUP_COLOR_ID,
   payload,
 });

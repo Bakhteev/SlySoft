@@ -1,9 +1,19 @@
 @import '@/styles/variables';
 
 .ui-select {
+
   &__select {
+    width: 100%;
     display: block;
-    font-size: 30px;
+    font-size: 16px;
+    padding: 10px 50px 10px 10px;
+    border-radius: 6px;
+    border: 1px solid #707070;
+    background: transparent url("@/assets/arrow.svg") no-repeat;
+    background-size: 20px;
+    background-position-x: 97%;
+    background-position-y: 50%;
+
   }
 
 

@@ -1,0 +1,20 @@
+.ui-input {
+  input {
+    padding: 10px 14px;
+    font-size: 16px;
+    height: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+  }
+
+  &.ui-input--rounded-left input {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+
+  &.ui-input--rounded-right input {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+}

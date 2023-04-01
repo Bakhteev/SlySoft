@@ -1,21 +1,28 @@
-import React from 'react';
+import React, { ChangeEvent, ReactNode, SelectHTMLAttributes } from 'react';
 import './UiSelect.scss';
+import cn from 'classnames';
 
-const UiSelect = ({ options }: UiSelectProps) => {
-    return (
-        <label className={'ui-select'}>
-            <select className={'ui-select__select'}>
-                {options.length &&
-          options.map(({ data, selected, value }) => (
-              <option className={'ui-select__option'} key={value} value={value} selected={selected}>{data}</option>
-          ))}
-            </select>
-        </label>
-    );
+const UiSelect = ({
+  children,
+  onChange,
+  defaultValue,
+  className,
+  ...meta
+}: UiSelectProps) => {
+  const classNames = cn('ui-select', className);
+  return (
+    <label className={classNames} defaultValue={defaultValue}>
+      <select onChange={onChange} {...meta} className={'ui-select__select'}>
+        {children}
+      </select>
+    </label>
+  );
 };
 
-interface UiSelectProps {
-  options: { data: string; selected: boolean, value: string }[];
-}
+type UiSelectProps = {
+  children?: ReactNode;
+  onChange?: (e: ChangeEvent<HTMLSelectElement>) => void;
+  defaultValue?: string | number | readonly string[] | undefined;
+} & SelectHTMLAttributes<HTMLSelectElement>;
 
 export default UiSelect;

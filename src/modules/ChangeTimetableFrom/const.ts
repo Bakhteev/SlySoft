@@ -47,12 +47,32 @@ export const brakeTimeOptions = [
   { value: 30, label: '30 мин' },
 ];
 
-// const chooseTeacherPlaceHolder = {
-//   label: 'Выберите преподователя на это время',
-//   value: null,
-// };
-// const chooseStudyRoomPlaceholder = { label: 'Аудитория', value: null };
 export const teachersNames = [
-  { label: 'Выберите преподователя на это время', value: 0 },
+  {
+    label: 'Выберите преподователя на это время',
+    value: 0,
+  },
+  {
+    label: 'Выберите преподователя на это время',
+    value: 1,
+  },
+  {
+    label: 'Выберите преподователя на это время',
+    value: 2,
+  },
+  {
+    label: 'Выберите преподователя на это время',
+    value: 3,
+  },
+  {
+    label: 'Выберите преподователя на это время',
+    value: 4,
+  },
 ];
-export const studyRooms = [{ label: 'Аудитория', value: 0 }];
+export const studyRooms = [
+  { label: 'Аудитория', value: 0 },
+  { label: 'Аудитория', value: 1 },
+  { label: 'Аудитория', value: 2 },
+  { label: 'Аудитория', value: 3 },
+  { label: 'Аудитория', value: 4 },
+];

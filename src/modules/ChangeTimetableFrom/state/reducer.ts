@@ -1,5 +1,8 @@
 import { defaultDateFrom } from '@/modules/ChangeTimetableFrom/const';
+import { calcDate } from '@/shared/utils/calcDate';
+import { DaysEnum } from '@/shared/enums';
 import {
+  RESTORE_STATE,
   SET_BRAKE_TIME,
   SET_DATE_FROM,
   SET_DATE_TO,
@@ -9,14 +12,9 @@ import {
   SET_START_TIME,
   SET_TOTAL_HOURS,
   SET_WORKING_DAYS,
-} from '@/modules/ChangeTimetableFrom/actions/ChangeTimetable.actions';
-import { calcDate } from '@/shared/utils/calcDate';
-import { DaysEnum } from '@/shared/enums';
-
-//TODO: destruct
+} from '@/modules/ChangeTimetableFrom/state/actions/actions.types';
 
 export interface IChangeTimetableState {
-  isLoading: boolean;
   totalHours: number;
   dateFrom: string;
   dateTo: string;
@@ -26,6 +24,10 @@ export interface IChangeTimetableState {
   workingDays: DaysEnum[];
   startTime: string;
   endTime: string;
+  studyRoomId: number;
+  teacherId: number;
+  schoolId: number;
+  groupColorId: number;
 }
 
 export interface Action {
@@ -36,7 +38,6 @@ export interface Action {
 }
 
 export const initialState: IChangeTimetableState = {
-  isLoading: false,
   totalHours: 1,
   dateFrom: defaultDateFrom,
   dateTo: calcDate(defaultDateFrom, 1, 1, [
@@ -50,6 +51,10 @@ export const initialState: IChangeTimetableState = {
   workingDays: [DaysEnum.MONDAY, DaysEnum.WEDNESDAY, DaysEnum.FRIDAY],
   startTime: '07:00',
   endTime: '07:45',
+  studyRoomId: 0,
+  teacherId: 0,
+  schoolId: 1,
+  groupColorId: 12,
 };
 
 export const reducer = (
@@ -75,6 +80,8 @@ export const reducer = (
       return { ...state, endTime: payload };
     case SET_WORKING_DAYS:
       return { ...state, workingDays: payload };
+    case RESTORE_STATE:
+      return initialState;
     default:
       return state;
   }

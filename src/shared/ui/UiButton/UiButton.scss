@@ -3,6 +3,9 @@
 .ui-button {
   padding: 10px 20px;
   border: 1px solid $grey;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 400;
 
   &.ui-button--rounded-left {
     border-top-left-radius: 6px;

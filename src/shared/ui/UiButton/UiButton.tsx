@@ -9,6 +9,7 @@ const UiButton: FC<UiButtonProps> = ({
   roundedRight,
   roundedLeft,
   variant = 'blue',
+  ...meta
 }) => {
   const classNames = cn(
     'ui-button',
@@ -18,7 +19,7 @@ const UiButton: FC<UiButtonProps> = ({
     `ui-button--${variant}`
   );
   return (
-    <button className={classNames} onClick={onClick}>
+    <button className={classNames} onClick={onClick} {...meta}>
       {children}
     </button>
   );
@@ -26,7 +27,7 @@ const UiButton: FC<UiButtonProps> = ({
 
 type UiButtonProps = {
   children?: JSX.Element | string;
-  onClick?(e: MouseEvent<HTMLButtonElement>): void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   roundedLeft?: boolean;
   roundedRight?: boolean;
   variant?: 'blue' | 'white';

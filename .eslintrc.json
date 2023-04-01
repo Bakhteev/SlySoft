@@ -20,23 +20,10 @@
     "react",
     "@typescript-eslint",
     "prettier"
-  ]
-  //  "rules": {
-  //    "indent": [
-  //      "error",
-  //      4
-  //    ],
-  //    "linebreak-style": [
-  //      "error",
-  //      "unix"
-  //    ],
-  //    "quotes": [
-  //      "error",
-  //      "single"
-  //    ],
-  //    "semi": [
-  //      "error",
-  //      "always"
-  //    ]
-  //  }
+  ],
+  "settings": {
+    "react": {
+      "version": "18.2.0"
+    }
+  }
 }

@@ -1,0 +1,75 @@
+@import "@/styles/variables";
+
+.change-timetable-form {
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: $white;
+
+  &__choose-teacher {
+    flex: 69%;
+  }
+
+  &__choose-room {
+    flex: 33.33%;
+  }
+
+  //не придумал название
+  &__text {
+    width: 51px;
+    padding: 5px;
+    font-size: 12px;
+    background: $light-blue;
+    text-align: center;
+    border: 1px solid $grey;
+  }
+
+  &__short-text {
+    padding: 10px;
+    background: $grey;
+    color: white;
+    text-transform: lowercase;
+    text-align: center;
+    border: 1px solid $grey;
+  }
+
+  &__info {
+    background: $pink;
+    padding: 5px 10px;
+  }
+
+  .form-header {
+    padding: 10px;
+    border-bottom: 1px solid $grey;
+
+    &__close-btn {
+      font-size: 30px;
+      padding: 5px;
+    }
+
+  }
+
+  .form-footer {
+    border-top: 1px solid $grey;
+    padding: 10px;
+    justify-content: flex-end;
+
+    &__add-btn {
+      padding: 5px 10px;
+      border: 1px solid $black;
+      border-radius: 4px;
+      font-size: 18px;
+      margin-left: 15px;
+    }
+
+    &__cancel-btn {
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 18px;
+    }
+  }
+}
+

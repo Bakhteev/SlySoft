@@ -7,6 +7,7 @@ export const calcTime = (
   brakeTime: number
 ) => {
   const minutes = hourType === 0 ? 45 : 60;
+  console.log(hoursPerDay);
   const timeToAdd = minutes * hoursPerDay + brakeTime * (hoursPerDay - 1);
   return moment(startTime, 'HH:mm').add(timeToAdd, 'minutes').format('HH:mm');
 };
